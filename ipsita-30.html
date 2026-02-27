@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy 30th Ipsita ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
@@ -16,56 +17,58 @@ body {
   overflow-x: hidden;
 }
 
-/* BIG 30 */
 .big30 {
   position: fixed;
-  font-size: 300px;
+  font-size: 40vw;
   font-weight: 700;
-  color: rgba(212,175,55,0.07);
+  color: rgba(212,175,55,0.06);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
+  user-select: none;
 }
 
-/* HERO */
 .hero {
   position: relative;
   z-index: 2;
-  padding-top: 60px;
+  padding: 40px 20px;
 }
 
 .hero img {
-  width: 320px;
+  width: 85%;
+  max-width: 320px;
   border-radius: 20px;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.7);
   animation: float 5s ease-in-out infinite;
-  cursor: pointer;
 }
 
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
+  50% { transform: translateY(-12px); }
   100% { transform: translateY(0px); }
 }
 
-h1 { font-size: 42px; margin-top: 25px; }
+h1 { font-size: 28px; margin-top: 20px; }
 .gold { color: #d4af37; }
 
-.subtitle { margin-top: 10px; opacity: 0.8; }
+.subtitle {
+  margin-top: 8px;
+  font-size: 16px;
+  opacity: 0.85;
+}
 
 #countdown {
-  margin-top: 15px;
-  font-size: 18px;
+  margin-top: 12px;
+  font-size: 15px;
   color: #d4af37;
 }
 
-/* CAKE */
 .cake {
-  margin-top: 60px;
+  margin-top: 40px;
   position: relative;
-  width: 220px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -73,8 +76,8 @@ h1 { font-size: 42px; margin-top: 25px; }
 .cake-base {
   position: absolute;
   bottom: 0;
-  width: 220px;
-  height: 120px;
+  width: 180px;
+  height: 100px;
   background: #1a1a1a;
   border-radius: 20px;
   border: 2px solid #d4af37;
@@ -82,21 +85,21 @@ h1 { font-size: 42px; margin-top: 25px; }
 
 .candle {
   position: absolute;
-  width: 12px;
-  height: 60px;
+  width: 10px;
+  height: 50px;
   background: white;
-  left: 104px;
+  left: 85px;
   top: 50px;
 }
 
 .flame {
   position: absolute;
-  width: 20px;
-  height: 30px;
+  width: 16px;
+  height: 24px;
   background: radial-gradient(circle, #ffd700 40%, orange 70%);
   border-radius: 50%;
-  left: 100px;
-  top: 20px;
+  left: 82px;
+  top: 30px;
   animation: flicker 0.15s infinite alternate;
 }
 
@@ -106,37 +109,34 @@ h1 { font-size: 42px; margin-top: 25px; }
 }
 
 button {
-  margin-top: 25px;
-  padding: 12px 30px;
-  border-radius: 30px;
+  margin-top: 20px;
+  padding: 12px 25px;
+  border-radius: 25px;
   border: 1px solid #d4af37;
   background: transparent;
   color: #d4af37;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #d4af37;
-  color: black;
+button:active {
+  transform: scale(0.95);
 }
 
-/* MESSAGE */
 .message {
-  max-width: 700px;
-  margin: 60px auto;
-  font-size: 20px;
-  line-height: 1.8;
+  max-width: 90%;
+  margin: 40px auto;
+  font-size: 16px;
+  line-height: 1.7;
   opacity: 0;
   transition: opacity 2s ease;
 }
 
 .show { opacity: 1; }
 
-/* SIGNATURE */
 .signature {
-  margin-top: 30px;
-  font-size: 22px;
+  margin-top: 20px;
+  font-size: 18px;
   opacity: 0;
   transition: opacity 2s ease;
 }
@@ -152,7 +152,6 @@ button:hover {
   100% { opacity: 0.6; }
 }
 
-/* FINAL SCREEN */
 .finalScreen {
   position: fixed;
   top: 0;
@@ -164,25 +163,36 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 40px;
+  font-size: 26px;
+  padding: 20px;
+  text-align: center;
   opacity: 0;
   pointer-events: none;
   transition: opacity 2s ease;
   z-index: 5;
 }
 
-.showFinal {
-  opacity: 1;
+.showFinal { opacity: 1; }
+
+/* Fireworks Canvas */
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 3;
 }
 </style>
 </head>
 
 <body>
 
+<canvas id="fireworks"></canvas>
+
 <div class="big30">30</div>
 
 <div class="hero">
-  <img src="ipsita.jpg" ondblclick="showSecret()" alt="Ipsita">
+  <img src="ipsita.jpg" alt="Ipsita">
   <h1>Happy <span class="gold">30th</span> Birthday, Ipsita ❤️</h1>
   <div class="subtitle">Thirty years of elegance. A lifetime more of magic.</div>
   <div id="countdown"></div>
@@ -197,29 +207,25 @@ button:hover {
 <button onclick="startListening()">Blow the Candle 🎂</button>
 
 <div class="message" id="message">
-  Ipsita,  
+Ipsita,  
 
-  At 30, you stand in your most powerful chapter yet —  
-  confident, radiant, and beautifully yourself.  
+You are grace, strength, warmth and quiet power.  
+This new decade will belong to you.  
 
-  You are warmth in human form.  
-  You are strength wrapped in grace.  
-  You are the calm in my chaos.  
-
-  I hope this decade brings you everything your heart dreams of.  
+May every dream chase you the way I do. ❤️
 </div>
 
 <div class="signature" id="signature">
-  With all my love,  
-  <span>— Khalikul ❤️</span>
+With all my love,  
+<span>— Khalikul ❤️</span>
 </div>
 
 <div class="finalScreen" id="finalScreen">
-  I Love You Forever, Ipsita ❤️
+I Love You Forever, Ipsita ❤️
 </div>
 
 <audio id="music" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5c9b0c7e94.mp3" type="audio/mpeg">
+<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5c9b0c7e94.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -229,53 +235,80 @@ const signature = document.getElementById("signature");
 const finalScreen = document.getElementById("finalScreen");
 const music = document.getElementById("music");
 
-/* Countdown to March 2 */
+/* Countdown */
 const targetDate = new Date("March 2, 2026 00:00:00").getTime();
-const countdown = document.getElementById("countdown");
-
-setInterval(function(){
+setInterval(()=>{
   const now = new Date().getTime();
   const distance = targetDate - now;
-
   if(distance > 0){
     const days = Math.floor(distance / (1000*60*60*24));
-    const hours = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
-    const minutes = Math.floor((distance % (1000*60*60))/(1000*60));
-    countdown.innerHTML = days+"d "+hours+"h "+minutes+"m until your moment ✨";
+    document.getElementById("countdown").innerHTML = days+" days until your day ✨";
   } else {
-    countdown.innerHTML = "It’s your day, my love ❤️";
+    document.getElementById("countdown").innerHTML = "It’s your day ❤️";
   }
 },1000);
 
-function startListening() {
+function startListening(){
   music.play();
-  navigator.mediaDevices.getUserMedia({ audio: true })
-  .then(stream => {
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
     const audioContext = new AudioContext();
     const mic = audioContext.createMediaStreamSource(stream);
     const analyser = audioContext.createAnalyser();
     mic.connect(analyser);
     const data = new Uint8Array(analyser.frequencyBinCount);
 
-    function detectBlow() {
+    function detect(){
       analyser.getByteFrequencyData(data);
       let volume = data.reduce((a,b)=>a+b)/data.length;
-
-      if(volume > 65) {
-        flame.style.display = "none";
+      if(volume > 65){
+        flame.style.display="none";
         message.classList.add("show");
-        signature.style.opacity = "1";
-        setTimeout(()=> finalScreen.classList.add("showFinal"), 6000);
+        signature.style.opacity="1";
+        startFireworks();
+        setTimeout(()=> finalScreen.classList.add("showFinal"),7000);
       }
-
-      requestAnimationFrame(detectBlow);
+      requestAnimationFrame(detect);
     }
-
-    detectBlow();
+    detect();
   });
 }
 
-/* Console Easter Egg */
+/* Fireworks */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function startFireworks(){
+  for(let i=0;i<100;i++){
+    particles.push({
+      x: canvas.width/2,
+      y: canvas.height/2,
+      dx: (Math.random()-0.5)*6,
+      dy: (Math.random()-0.5)*6,
+      life: 100
+    });
+  }
+  animate();
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i)=>{
+    p.x+=p.dx;
+    p.y+=p.dy;
+    p.life--;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,2,0,Math.PI*2);
+    ctx.fillStyle="gold";
+    ctx.fill();
+    if(p.life<=0) particles.splice(i,1);
+  });
+  if(particles.length>0) requestAnimationFrame(animate);
+}
+
 console.log("if (heart === 'Ipsita') { forever = true; } ❤️");
 </script>
 
