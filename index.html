@@ -296,38 +296,71 @@ const finalScreen=document.getElementById("finalScreen");
 const music=document.getElementById("music");
 
 function startListening(){
-  music.volume=0;
-  music.play();
-  let fade=setInterval(()=>{
-    if(music.volume<0.6){music.volume+=0.02;}
-    else clearInterval(fade);
+
+  // Force user interaction audio unlock
+  music.volume = 0;
+  music.play().catch(() => {});
+
+  // Smooth fade-in
+  let fade = setInterval(()=>{
+    if(music.volume < 0.6){
+      music.volume += 0.02;
+    } else {
+      clearInterval(fade);
+    }
   },200);
 
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    const ctxAudio=new AudioContext();
-    const mic=ctxAudio.createMediaStreamSource(stream);
-    const analyser=ctxAudio.createAnalyser();
+  navigator.mediaDevices.getUserMedia({audio:true})
+  .then(stream => {
+
+    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Important for Safari
+    if (ctxAudio.state === "suspended") {
+      ctxAudio.resume();
+    }
+
+    const mic = ctxAudio.createMediaStreamSource(stream);
+    const analyser = ctxAudio.createAnalyser();
     mic.connect(analyser);
-    const data=new Uint8Array(analyser.frequencyBinCount);
+    const data = new Uint8Array(analyser.frequencyBinCount);
 
     function detect(){
       analyser.getByteFrequencyData(data);
-      let volume=data.reduce((a,b)=>a+b)/data.length;
-      if(volume>65){
-        flame.style.display="none";
-        message.classList.add("show");
-        signature.style.opacity="1";
-        if(navigator.vibrate) navigator.vibrate([200,100,200]);
-        startFireworks();
-        setTimeout(()=>{
-          finalScreen.classList.add("showFinal");
-          if(navigator.vibrate) navigator.vibrate([300,150,300,150,500]);
-        },7000);
+      let volume = data.reduce((a,b)=>a+b)/data.length;
+
+      if(volume > 65){
+        triggerBirthdayMoment();
       }
+
       requestAnimationFrame(detect);
     }
+
     detect();
+
+  }).catch(()=>{
+    // If mic permission denied — still allow experience
+    triggerBirthdayMoment();
   });
+}
+
+function triggerBirthdayMoment(){
+  flame.style.display="none";
+  message.classList.add("show");
+  signature.style.opacity="1";
+
+  if(navigator.vibrate){
+    navigator.vibrate([200,100,200]);
+  }
+
+  startFireworks();
+
+  setTimeout(()=>{
+    finalScreen.classList.add("showFinal");
+    if(navigator.vibrate){
+      navigator.vibrate([300,150,300,150,500]);
+    }
+  },7000);
 }
 
 /* Fireworks */
