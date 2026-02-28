@@ -209,17 +209,27 @@ for(let i=0;i<40;i++){
   document.body.appendChild(p);
 }
 
-/* Countdown */
-const targetDate=new Date("March 2, 2026 00:00:00").getTime();
+/* Dynamic March 2 Midnight Countdown */
+const now = new Date();
+let targetDate = new Date(now.getFullYear(), 2, 2, 0, 0, 0).getTime();
+
+// If March 2 already passed this year, use next year
+if(now.getTime() > targetDate){
+  targetDate = new Date(now.getFullYear()+1, 2, 2, 0, 0, 0).getTime();
+}
+
 setInterval(()=>{
-  const now=new Date().getTime();
-  const distance=targetDate-now;
-  if(distance>0){
-    const hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-    const minutes=Math.floor((distance%(1000*60*60))/(1000*60));
-    const seconds=Math.floor((distance%(1000*60))/1000);
-    document.getElementById("countdownTimer").innerHTML=
-      hours+"h "+minutes+"m "+seconds+"s";
+  const current = new Date().getTime();
+  const distance = targetDate - current;
+
+  if(distance > 0){
+    const days = Math.floor(distance/(1000*60*60*24));
+    const hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+    const minutes = Math.floor((distance%(1000*60*60))/(1000*60));
+    const seconds = Math.floor((distance%(1000*60))/1000);
+
+    document.getElementById("countdownTimer").innerHTML =
+      days+"d "+hours+"h "+minutes+"m "+seconds+"s";
   } else {
     document.getElementById("countdownScreen").style.display="none";
     document.getElementById("birthdayScreen").style.display="block";
@@ -273,7 +283,7 @@ function animate(){
   if(particles.length>0)requestAnimationFrame(animate);
 }
 
-/* Knife + Cut + Roses */
+/* Knife + Roses */
 const cake=document.getElementById("cake");
 const knife=document.getElementById("knife");
 let cutting=false;
@@ -282,14 +292,26 @@ cake.addEventListener("touchstart",()=>{
   cutting=true;
   knife.style.display="block";
 });
-
 cake.addEventListener("touchmove",e=>{
   if(!cutting)return;
   let rect=cake.getBoundingClientRect();
   knife.style.left=(e.touches[0].clientX-rect.left)+"px";
 });
-
 cake.addEventListener("touchend",()=>{
+  cutting=false;
+  knife.style.display="none";
+  releaseRoses();
+});
+cake.addEventListener("mousedown",()=>{
+  cutting=true;
+  knife.style.display="block";
+});
+cake.addEventListener("mousemove",e=>{
+  if(!cutting)return;
+  let rect=cake.getBoundingClientRect();
+  knife.style.left=(e.clientX-rect.left)+"px";
+});
+cake.addEventListener("mouseup",()=>{
   cutting=false;
   knife.style.display="none";
   releaseRoses();
