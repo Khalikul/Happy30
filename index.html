@@ -56,18 +56,20 @@ body{
   50%{transform:translateY(-12px);}
   100%{transform:translateY(0);}
 }
+
 h1{font-size:28px;margin-top:20px;}
 .gold{color:#d4af37;}
 .subtitle{margin-top:8px;font-size:16px;opacity:0.85;}
 #countdown{margin-top:10px;color:#d4af37;font-size:15px;}
 
-/* REALISTIC CAKE */
+/* CAKE */
 .cake{
   margin:50px auto;
   position:relative;
   width:200px;
   height:240px;
 }
+
 .plate{
   position:absolute;
   bottom:0;
@@ -77,6 +79,7 @@ h1{font-size:28px;margin-top:20px;}
   border-radius:50%;
   left:-10px;
 }
+
 .layer{
   position:absolute;
   width:200px;
@@ -84,16 +87,19 @@ h1{font-size:28px;margin-top:20px;}
   border-radius:15px;
   box-shadow:0 10px 25px rgba(0,0,0,0.6);
 }
+
 .bottom-layer{
   height:80px;
   bottom:20px;
   background:linear-gradient(#ffb6c1,#ff8fab);
 }
+
 .top-layer{
   height:70px;
   bottom:100px;
   background:linear-gradient(#ffc6ff,#f3c4fb);
 }
+
 .drip{
   position:absolute;
   width:200px;
@@ -102,17 +108,7 @@ h1{font-size:28px;margin-top:20px;}
   background:#4e342e;
   border-radius:15px 15px 50% 50%;
 }
-.drip::before,.drip::after{
-  content:"";
-  position:absolute;
-  width:25px;
-  height:35px;
-  background:#4e342e;
-  border-radius:50%;
-  top:20px;
-}
-.drip::before{left:40px;}
-.drip::after{right:40px;}
+
 .frosting{
   position:absolute;
   width:200px;
@@ -122,7 +118,7 @@ h1{font-size:28px;margin-top:20px;}
   border-radius:50%;
 }
 
-/* Icing 30 */
+/* Icing Text */
 .icingText{
   position:absolute;
   bottom:130px;
@@ -131,8 +127,7 @@ h1{font-size:28px;margin-top:20px;}
   font-size:32px;
   font-weight:bold;
   color:white;
-  text-shadow:0 0 10px #fff, 0 0 20px #ffb6c1;
-  font-family:'Playfair Display', serif;
+  text-shadow:0 0 10px #fff,0 0 20px #ffb6c1;
 }
 
 /* Candle */
@@ -145,6 +140,7 @@ h1{font-size:28px;margin-top:20px;}
   bottom:175px;
   border-radius:4px;
 }
+
 .flame{
   position:absolute;
   width:18px;
@@ -159,6 +155,34 @@ h1{font-size:28px;margin-top:20px;}
 @keyframes flicker{
   from{transform:scale(1);}
   to{transform:scale(1.15);}
+}
+
+/* Knife */
+.knife{
+  position:absolute;
+  width:80px;
+  height:6px;
+  background:linear-gradient(to right,#ccc,#eee,#ccc);
+  top:100px;
+  left:60px;
+  border-radius:4px;
+  transform-origin:left center;
+  display:none;
+  box-shadow:0 0 10px #aaa;
+}
+
+/* Cake Cut */
+.cake.cut .bottom-layer,
+.cake.cut .top-layer,
+.cake.cut .drip,
+.cake.cut .frosting,
+.cake.cut .icingText{
+  animation:split 1s forwards;
+}
+
+@keyframes split{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(15px);}
 }
 
 button{
@@ -198,7 +222,6 @@ button{
   100%{opacity:0.6;}
 }
 
-/* Final Screen */
 .finalScreen{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
@@ -231,7 +254,7 @@ canvas{
   <div id="countdown"></div>
 </div>
 
-<div class="cake">
+<div class="cake" id="cake">
   <div class="plate"></div>
   <div class="layer bottom-layer"></div>
   <div class="layer top-layer"></div>
@@ -240,6 +263,7 @@ canvas{
   <div class="icingText">30</div>
   <div class="candle"></div>
   <div class="flame" id="flame"></div>
+  <div class="knife" id="knife"></div>
 </div>
 
 <button onclick="startListening()">Blow the Candle 🎂</button>
@@ -274,21 +298,7 @@ for(let i=0;i<40;i++){
   document.body.appendChild(s);
 }
 
-/* Countdown */
-const targetDate=new Date("March 2, 2026 00:00:00").getTime();
-setInterval(()=>{
-  const now=new Date().getTime();
-  const distance=targetDate-now;
-  if(distance>0){
-    const days=Math.floor(distance/(1000*60*60*24));
-    document.getElementById("countdown").innerHTML=
-    days+" days until your day ✨";
-  }else{
-    document.getElementById("countdown").innerHTML="It’s your day ❤️";
-  }
-},1000);
-
-/* Blow + Music + Fireworks */
+/* Blow + Music */
 const flame=document.getElementById("flame");
 const message=document.getElementById("message");
 const signature=document.getElementById("signature");
@@ -296,71 +306,17 @@ const finalScreen=document.getElementById("finalScreen");
 const music=document.getElementById("music");
 
 function startListening(){
-
-  // Force user interaction audio unlock
-  music.volume = 0;
-  music.play().catch(() => {});
-
-  // Smooth fade-in
-  let fade = setInterval(()=>{
-    if(music.volume < 0.6){
-      music.volume += 0.02;
-    } else {
-      clearInterval(fade);
-    }
+  music.volume=0;
+  music.play();
+  let fade=setInterval(()=>{
+    if(music.volume<0.6){music.volume+=0.02;}
+    else clearInterval(fade);
   },200);
 
-  navigator.mediaDevices.getUserMedia({audio:true})
-  .then(stream => {
-
-    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-
-    // Important for Safari
-    if (ctxAudio.state === "suspended") {
-      ctxAudio.resume();
-    }
-
-    const mic = ctxAudio.createMediaStreamSource(stream);
-    const analyser = ctxAudio.createAnalyser();
-    mic.connect(analyser);
-    const data = new Uint8Array(analyser.frequencyBinCount);
-
-    function detect(){
-      analyser.getByteFrequencyData(data);
-      let volume = data.reduce((a,b)=>a+b)/data.length;
-
-      if(volume > 65){
-        triggerBirthdayMoment();
-      }
-
-      requestAnimationFrame(detect);
-    }
-
-    detect();
-
-  }).catch(()=>{
-    // If mic permission denied — still allow experience
-    triggerBirthdayMoment();
-  });
-}
-
-function triggerBirthdayMoment(){
   flame.style.display="none";
   message.classList.add("show");
   signature.style.opacity="1";
-
-  if(navigator.vibrate){
-    navigator.vibrate([200,100,200]);
-  }
-
   startFireworks();
-
-  setTimeout(()=>{
-    finalScreen.classList.add("showFinal");
-    if(navigator.vibrate){
-      navigator.vibrate([300,150,300,150,500]);
-    }
-  },7000);
 }
 
 /* Fireworks */
@@ -370,19 +326,14 @@ canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 let particles=[];
 function startFireworks(){
-  for(let burst=0;burst<4;burst++){
-    setTimeout(()=>{
-      let x=Math.random()*canvas.width;
-      let y=Math.random()*canvas.height/2;
-      for(let i=0;i<80;i++){
-        particles.push({
-          x:x,y:y,
-          dx:(Math.random()-0.5)*8,
-          dy:(Math.random()-0.5)*8,
-          life:100
-        });
-      }
-    },burst*600);
+  for(let i=0;i<80;i++){
+    particles.push({
+      x:canvas.width/2,
+      y:canvas.height/2,
+      dx:(Math.random()-0.5)*8,
+      dy:(Math.random()-0.5)*8,
+      life:100
+    });
   }
   animate();
 }
@@ -390,17 +341,39 @@ function animate(){
   ctx.fillStyle="rgba(0,0,0,0.2)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
   particles.forEach((p,i)=>{
-    p.x+=p.dx;
-    p.y+=p.dy;
-    p.life--;
+    p.x+=p.dx;p.y+=p.dy;p.life--;
     ctx.beginPath();
     ctx.arc(p.x,p.y,2,0,Math.PI*2);
     ctx.fillStyle="gold";
     ctx.fill();
-    if(p.life<=0) particles.splice(i,1);
+    if(p.life<=0)particles.splice(i,1);
   });
-  if(particles.length>0) requestAnimationFrame(animate);
+  if(particles.length>0)requestAnimationFrame(animate);
 }
+
+/* Knife Follow + Cut */
+const cake=document.getElementById("cake");
+const knife=document.getElementById("knife");
+let cutting=false;
+
+cake.addEventListener("touchstart",e=>{
+  cutting=true;
+  knife.style.display="block";
+});
+
+cake.addEventListener("touchmove",e=>{
+  if(!cutting)return;
+  let rect=cake.getBoundingClientRect();
+  let x=e.touches[0].clientX-rect.left;
+  knife.style.left=x+"px";
+});
+
+cake.addEventListener("touchend",()=>{
+  cutting=false;
+  knife.style.display="none";
+  cake.classList.add("cut");
+  if(navigator.vibrate)navigator.vibrate([200,100,200]);
+});
 
 console.log("if (heart === 'Ipsita') { forever = true; } ❤️");
 </script>
