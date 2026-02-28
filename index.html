@@ -6,6 +6,8 @@
 <title>For Ipsita ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<!-- html2canvas for screenshot -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 body{
@@ -73,12 +75,13 @@ body{
 
 .gold{ color:#d4af37; }
 
-/* Cake */
+/* Cake - with touch-action to prevent scroll while cutting */
 .cake{
   margin:40px auto;
   position:relative;
   width:200px;
   height:230px;
+  touch-action: none; /* Prevents page scroll while dragging on touch devices */
 }
 .cake-base{
   position:absolute;
@@ -144,14 +147,28 @@ body{
   to{transform:translateY(-10vh);opacity:0;}
 }
 
+/* Buttons - bigger tap targets on mobile */
 button{
-  padding:12px 25px;
-  border-radius:25px;
+  padding:14px 28px;  /* Slightly larger for easier tapping */
+  border-radius:30px;
   border:1px solid #d4af37;
   background:transparent;
   color:#d4af37;
-  font-size:15px;
+  font-size:16px;
   cursor:pointer;
+  margin:8px;
+  transition:all 0.2s ease;
+}
+button:hover{
+  background:rgba(212,175,55,0.2);
+}
+@media (max-width:600px){
+  button{
+    padding:16px 32px;
+    font-size:18px;
+    width:80%;
+    max-width:300px;
+  }
 }
 
 .message{
@@ -160,6 +177,15 @@ button{
   transition:opacity 2s ease;
 }
 .show{ opacity:1; }
+
+/* Capture button - initially hidden */
+#captureBtn{
+  display:none;
+  margin-top:20px;
+}
+#captureBtn.show{
+  display:inline-block;
+}
 
 canvas{
   position:fixed;
@@ -198,6 +224,9 @@ canvas{
   <div class="message" id="message">
     With all my love — Khalikul ❤️
   </div>
+
+  <!-- Screenshot button appears after blowing candle -->
+  <button id="captureBtn" onclick="captureAndShare()">Capture this moment 📸</button>
 </div>
 
 <canvas id="fireworks"></canvas>
@@ -279,6 +308,8 @@ function blowCandle(){
 
   document.getElementById("flame").style.display="none";
   document.getElementById("message").classList.add("show");
+  // Show the capture button
+  document.getElementById("captureBtn").classList.add("show");
   startFireworks();
 }
 
@@ -325,6 +356,7 @@ cake.addEventListener("touchstart",()=>{
 });
 cake.addEventListener("touchmove",e=>{
   if(!cutting)return;
+  e.preventDefault(); // additional safety with touch-action
   let rect=cake.getBoundingClientRect();
   knife.style.left=(e.touches[0].clientX-rect.left)+"px";
 });
@@ -359,6 +391,42 @@ function releaseRoses(){
       setTimeout(()=>rose.remove(),6000);
     },i*120);
   }
+}
+
+/* ===== Screenshot & Share ===== */
+function captureAndShare() {
+  const element = document.getElementById("birthdayScreen"); // Capture the whole birthday screen
+
+  // Use html2canvas to render the element
+  html2canvas(element, {
+    scale: 1.5, // Better quality
+    backgroundColor: null, // Keep transparency? But background is black anyway.
+    allowTaint: false,
+    useCORS: true // For images from same origin (ipsita.jpeg)
+  }).then((canvas) => {
+    // Convert canvas to blob
+    canvas.toBlob((blob) => {
+      if (navigator.share) {
+        // Use Web Share API if available (mobile)
+        const file = new File([blob], 'birthday-moment.png', { type: 'image/png' });
+        navigator.share({
+          title: 'Ipsita\'s Birthday',
+          text: 'Look at this beautiful moment!',
+          files: [file]
+        }).catch((error) => console.log('Share failed:', error));
+      } else {
+        // Fallback: download the image
+        const link = document.createElement('a');
+        link.download = 'birthday-moment.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+    }, 'image/png');
+  }).catch(error => {
+    alert('Sorry, could not capture the moment. Try again.');
+    console.error(error);
+  });
 }
 </script>
 
