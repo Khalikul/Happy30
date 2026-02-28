@@ -224,11 +224,6 @@ function getNowUTC() {
   return Date.now();
 }
 
-// Get a Date object representing the current moment in Sri Lanka time
-function getNowLocal() {
-  return new Date(getNowUTC() + TARGET_OFFSET);
-}
-
 // Get UTC timestamp for a given local date and time (e.g., March 2, 00:00 local)
 function getLocalTargetTimestamp(year, month, day, hour = 0, minute = 0, second = 0) {
   // local date/time = (year, month, day, hour, minute, second) in Sri Lanka time
@@ -238,7 +233,7 @@ function getLocalTargetTimestamp(year, month, day, hour = 0, minute = 0, second 
 
 // Determine target timestamp for next March 2, 00:00 local time
 let nowUTC = getNowUTC();
-let nowLocal = getNowLocal();
+let nowLocal = new Date(nowUTC + TARGET_OFFSET);
 let targetYear = nowLocal.getUTCFullYear();
 let targetTimestamp = getLocalTargetTimestamp(targetYear, 2, 2, 0, 0, 0); // March 2, 00:00 local
 
@@ -259,30 +254,14 @@ function updateCountdown() {
     return;
   }
 
-  // Compute calendar days remaining (based on local dates)
-  const currentLocal = new Date(currentUTC + TARGET_OFFSET);
-  const currentLocalYear = currentLocal.getUTCFullYear();
-  const currentLocalMonth = currentLocal.getUTCMonth();
-  const currentLocalDay = currentLocal.getUTCDate();
-
-  const targetLocalYear = targetYear;
-  const targetLocalMonth = 2; // March
-  const targetLocalDay = 2;
-
-  // Start of today in local time (midnight)
-  const startTodayLocal = getLocalTargetTimestamp(currentLocalYear, currentLocalMonth, currentLocalDay, 0, 0, 0);
-  // Start of target day in local time
-  const startTargetLocal = getLocalTargetTimestamp(targetLocalYear, targetLocalMonth, targetLocalDay, 0, 0, 0);
-
-  const dayDiff = Math.round((startTargetLocal - startTodayLocal) / (24 * 60 * 60 * 1000));
-
-  // Hours, minutes, seconds from the full distance
+  // Standard countdown: days = full 24h periods, hours = remainder
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
   document.getElementById("countdownTimer").innerHTML =
-    `${dayDiff}d ${hours}h ${minutes}m ${seconds}s`;
+    `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
 // Run every second
