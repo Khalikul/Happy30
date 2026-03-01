@@ -18,38 +18,22 @@ body{
   background:#000;
 }
 
-/* ===== Ambient Background ===== */
+/* Ambient background */
 body::before{
   content:"";
   position:fixed;
   top:-50%; left:-50%;
   width:200%; height:200%;
   background:radial-gradient(circle at 30% 30%, rgba(212,175,55,.15), transparent 40%);
-  animation:ambientMove 18s linear infinite alternate;
+  animation:ambientMove 20s linear infinite alternate;
   z-index:-2;
 }
 @keyframes ambientMove{
   from{transform:translate(0,0);}
-  to{transform:translate(15%,15%);}
+  to{transform:translate(10%,10%);}
 }
 
-/* Floating particles */
-.particle{
-  position:fixed;
-  width:3px;height:3px;
-  background:gold;
-  border-radius:50%;
-  opacity:.4;
-  animation:floatUp linear infinite;
-  z-index:-1;
-}
-@keyframes floatUp{
-  from{transform:translateY(100vh);opacity:0;}
-  20%{opacity:.6;}
-  to{transform:translateY(-10vh);opacity:0;}
-}
-
-/* ===== Layout ===== */
+/* Layout */
 .container{
   position:absolute;
   width:100%;
@@ -70,11 +54,11 @@ button{
   background:rgba(0,0,0,.4);
   color:#d4af37;
   font-weight:bold;
-  margin:10px;
+  margin:12px;
   cursor:pointer;
 }
 
-/* ===== Cake ===== */
+/* Cake */
 .cake{position:relative;width:200px;height:230px;margin:20px auto;}
 .cake-base{
   position:absolute;bottom:0;width:100%;height:100px;
@@ -137,35 +121,20 @@ canvas{
   <button id="retryBtn" style="display:none;" onclick="resetBlow()">Try Again 🔁</button>
 
   <div class="message" id="message">
-    With all my love — Khalikul ❤️
+    With all my love ❤️
   </div>
 </div>
 
 <canvas id="confetti"></canvas>
 
-<audio id="bgMusic" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-
 <script>
-
-/* Floating particles */
-for(let i=0;i<30;i++){
-  let p=document.createElement("div");
-  p.className="particle";
-  p.style.left=Math.random()*100+"vw";
-  p.style.animationDuration=(6+Math.random()*6)+"s";
-  document.body.appendChild(p);
-}
-
-/* ================= MIC BLOW SYSTEM ================= */
+/* ================= iPHONE SAFE MIC SYSTEM ================= */
 
 let audioCtx;
 let analyser;
-let micSource;
+let micStream;
 let dataArray;
 let blowing=false;
-let blowTimeout;
 
 async function startMicBlow(){
   try{
@@ -176,28 +145,31 @@ async function startMicBlow(){
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
 
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    await audioCtx.resume();
+
+    if(audioCtx.state==="suspended"){
+      await audioCtx.resume();
+    }
 
     analyser=audioCtx.createAnalyser();
-    analyser.fftSize=1024;
+    analyser.fftSize=2048;
 
-    micSource=audioCtx.createMediaStreamSource(stream);
-    micSource.connect(analyser);
+    micStream=audioCtx.createMediaStreamSource(stream);
+    micStream.connect(analyser);
 
     dataArray=new Uint8Array(analyser.fftSize);
 
     listenForBlow();
 
-    blowTimeout=setTimeout(()=>{
+    setTimeout(()=>{
       if(!blowing){
         stopMic();
-        blowBtn.innerText="Too soft 😅";
+        blowBtn.innerText="Blow harder 😅";
         retryBtn.style.display="inline-block";
       }
     },5000);
 
-  }catch(e){
-    alert("Please allow microphone access 😢");
+  }catch(err){
+    alert("Please allow microphone access in Safari settings.");
   }
 }
 
@@ -206,17 +178,18 @@ function listenForBlow(){
 
   let sum=0;
   for(let i=0;i<dataArray.length;i++){
-    let val=(dataArray[i]-128)/128;
-    sum+=val*val;
+    let v=(dataArray[i]-128)/128;
+    sum+=v*v;
   }
-  let volume=Math.sqrt(sum/dataArray.length);
 
-  flame.style.transform=`translateX(-50%) scale(${1+volume*3})`;
-  flame.style.boxShadow=`0 0 ${volume*80}px gold`;
+  let rms=Math.sqrt(sum/dataArray.length);
 
-  if(volume>0.18){
+  flame.style.transform=`translateX(-50%) scale(${1+rms*4})`;
+  flame.style.boxShadow=`0 0 ${rms*100}px gold`;
+
+  // Lower threshold for iPhone mic compression
+  if(rms>0.12){
     blowing=true;
-    clearTimeout(blowTimeout);
     stopMic();
     extinguish();
     return;
@@ -226,7 +199,7 @@ function listenForBlow(){
 }
 
 function stopMic(){
-  if(micSource) micSource.disconnect();
+  if(micStream) micStream.disconnect();
   if(audioCtx) audioCtx.close();
 }
 
@@ -235,13 +208,12 @@ function resetBlow(){
   retryBtn.style.display="none";
 }
 
-/* ================= EXTINGUISH ================= */
+/* ================= EFFECTS ================= */
 
 function extinguish(){
   flame.style.display="none";
   createSmoke();
   startConfetti();
-  fadeMusicIn();
   message.classList.add("show");
 }
 
@@ -255,8 +227,7 @@ function createSmoke(){
   }
 }
 
-/* ================= CONFETTI ================= */
-
+/* Confetti */
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
@@ -264,21 +235,20 @@ canvas.height=window.innerHeight;
 
 let confetti=[];
 function startConfetti(){
-  for(let i=0;i<180;i++){
+  for(let i=0;i<150;i++){
     confetti.push({
       x:canvas.width/2,
       y:canvas.height/2,
-      vx:(Math.random()-0.5)*10,
-      vy:(Math.random()-0.5)*10,
+      vx:(Math.random()-0.5)*8,
+      vy:(Math.random()-0.5)*8,
       size:Math.random()*6+4,
       color:`hsl(${Math.random()*360},100%,50%)`,
       gravity:0.2,
-      life:220
+      life:200
     });
   }
   animateConfetti();
 }
-
 function animateConfetti(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   for(let i=confetti.length-1;i>=0;i--){
@@ -293,19 +263,7 @@ function animateConfetti(){
   }
   if(confetti.length>0) requestAnimationFrame(animateConfetti);
 }
-
-/* ================= MUSIC ================= */
-
-function fadeMusicIn(){
-  const music=document.getElementById("bgMusic");
-  music.volume=0;
-  music.play().catch(()=>{});
-  let fade=setInterval(()=>{
-    if(music.volume<0.5) music.volume+=0.02;
-    else clearInterval(fade);
-  },200);
-}
-
 </script>
+
 </body>
 </html>
