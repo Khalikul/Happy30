@@ -2,452 +2,259 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Ipsita ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
-<!-- html2canvas for screenshot -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-/* Global reset */
-* {
-  box-sizing: border-box;
-}
+*{box-sizing:border-box;}
 body{
   margin:0;
   background:radial-gradient(circle at top,#1a1a1a,#000 70%);
-  font-family:'Playfair Display', serif;
+  font-family:'Playfair Display',serif;
   color:white;
   text-align:center;
   overflow:hidden;
-  height: 100vh;
-  width: 100vw;
-}
-
-/* Floating particles */
-.particle{
-  position:fixed;
-  width:4px;height:4px;
-  background:gold;
-  border-radius:50%;
-  opacity:0.6;
-  animation:floatUp linear infinite;
-}
-@keyframes floatUp{
-  from{transform:translateY(100vh);opacity:0;}
-  20%{opacity:0.8;}
-  to{transform:translateY(-10vh);opacity:0;}
 }
 
 /* Countdown */
-#countdownScreen{
+#countdownScreen, #birthdayScreen{
   position:absolute;
-  width:100%;
-  height:100%;
+  width:100%;height:100%;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   padding:20px;
 }
-.glow-img{
-  width: min(70%, 280px);
-  border-radius:20px;
-  margin-top:10px;
-  box-shadow:0 0 40px rgba(212,175,55,0.7);
-}
-.countdown-message{
-  font-size: clamp(18px, 5vw, 24px);
-  color:#d4af37;
-  margin-top:15px;
-  letter-spacing:1px;
-  line-height:1.3;
-}
-#countdownTimer{
-  font-size: clamp(24px, 7vw, 40px);
-  margin-top:10px;
-  color:#d4af37;
-  /* Use system fonts for digits to ensure 0 looks like 0 */
-  font-family: 'Courier New', monospace, 'Playfair Display', serif;
-  font-variant-numeric: tabular-nums;
-  white-space: pre;  /* Keeps spaces intact */
-  letter-spacing: 2px;
-}
+#birthdayScreen{display:none;overflow-y:auto;}
+.glow-img{width:min(70%,280px);border-radius:20px;box-shadow:0 0 40px rgba(212,175,55,.7);}
+#countdownTimer{font-size:32px;color:#d4af37;font-family:monospace;margin-top:15px;}
 
-/* Birthday screen – scrollable if needed */
-#birthdayScreen{ 
-  display:none; 
-  padding:15px 15px 25px;
-  height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.hero img{
-  width: min(85%, 300px);
-  border-radius:20px;
-  box-shadow:0 0 30px rgba(212,175,55,0.6);
-  margin-top:5px;
-}
-.hero h1{
-  font-size: clamp(22px, 6vw, 32px);
-  margin:10px 0;
-}
-.gold{ color:#d4af37; }
-
-/* Cake – responsive size */
-.cake{
-  margin:15px auto;
-  position:relative;
-  width: min(200px, 50vw);
-  height: 230px;
-  touch-action: none;
-}
-.cake-base{
-  position:absolute;
-  bottom:0;
-  width:100%;
-  height:100px;
-  background:linear-gradient(#ffb6c1,#ff8fab);
-  border-radius:20px;
-}
-.icingText{
-  position:absolute;
-  bottom:60px;
-  width:100%;
-  font-size:32px;
-  color:white;
-  text-shadow:0 0 10px #fff;
-  font-family: 'Courier New', monospace; /* Ensure 30 is clear */
-}
-.candle{
-  position:absolute;
-  width:12px;height:60px;
-  background:white;
-  left:50%;
-  transform:translateX(-50%);
-  bottom:100px;
-}
-.flame{
-  position:absolute;
-  width:18px;height:26px;
-  left:50%;
-  transform:translateX(-50%);
-  bottom:160px;
-  background:radial-gradient(circle,#ffd700 40%,orange 70%);
-  border-radius:50%;
-  animation:flicker 0.15s infinite alternate;
-}
-@keyframes flicker{
-  from{transform:scale(1) translateX(-50%);}
-  to{transform:scale(1.15) translateX(-50%);}
-}
-
-/* Knife */
-.knife{
-  position:absolute;
-  width:80px;
-  height:6px;
-  background:linear-gradient(to right,#ccc,#eee,#ccc);
-  top:100px;
-  left:60px;
-  border-radius:4px;
-  transform-origin:left center;
-  display:none;
-}
-
-/* Roses */
-.rose{
-  position:fixed;
-  font-size:24px;
-  animation:riseRose 5s linear forwards;
-  pointer-events:none;
-  z-index:5;
-}
-@keyframes riseRose{
-  from{transform:translateY(100vh);opacity:0;}
-  10%{opacity:1;}
-  to{transform:translateY(-10vh);opacity:0;}
-}
-
-/* Buttons – mobile optimized */
+.gold{color:#d4af37;}
 button{
   padding:14px 20px;
   border-radius:40px;
   border:2px solid #d4af37;
-  background:rgba(0,0,0,0.3);
-  backdrop-filter: blur(5px);
+  background:rgba(0,0,0,.4);
   color:#d4af37;
-  font-size:16px;
   font-weight:bold;
+  margin:10px;
   cursor:pointer;
-  margin:8px auto;
-  transition:all 0.2s ease;
-  width: min(80%, 300px);
-  display:block;
-  box-shadow:0 4px 15px rgba(212,175,55,0.2);
-}
-button:hover{
-  background:rgba(212,175,55,0.3);
-  transform:scale(1.02);
-}
-@media (max-width:600px){
-  button{
-    padding:16px 20px;
-    font-size:18px;
-    width: 85%;
-  }
 }
 
-.message{
-  margin-top:15px;
-  opacity:0;
-  transition:opacity 2s ease;
-  font-size:clamp(16px, 4vw, 22px);
+/* Cake */
+.cake{position:relative;width:200px;height:230px;margin-top:20px;}
+.cake-base{
+  position:absolute;bottom:0;width:100%;height:100px;
+  background:linear-gradient(#ffb6c1,#ff8fab);
+  border-radius:20px;
 }
-.show{ opacity:1; }
+.candle{
+  position:absolute;width:12px;height:60px;background:white;
+  left:50%;transform:translateX(-50%);
+  bottom:100px;
+}
+.flame{
+  position:absolute;width:18px;height:26px;
+  left:50%;transform:translateX(-50%);
+  bottom:160px;
+  background:radial-gradient(circle,#ffd700 40%,orange 70%);
+  border-radius:50%;
+  transition:transform .1s;
+}
 
-/* Capture button – initially hidden */
-#captureBtn{
-  display:none;
+/* Smoke */
+.smoke{
+  position:absolute;
+  width:12px;height:12px;
+  background:rgba(200,200,200,.7);
+  border-radius:50%;
+  bottom:170px;
+  left:50%;
+  transform:translateX(-50%);
+  animation:smokeRise 3s ease-out forwards;
 }
-#captureBtn.show{
-  display:block;
+@keyframes smokeRise{
+  from{opacity:.8;transform:translate(-50%,0) scale(1);}
+  to{opacity:0;transform:translate(-50%,-80px) scale(2);}
 }
 
+/* Confetti canvas */
 canvas{
   position:fixed;
   top:0;left:0;
   pointer-events:none;
-  z-index:3;
 }
+.message{opacity:0;transition:opacity 2s;}
+.show{opacity:1;}
 </style>
 </head>
 
 <body>
 
 <div id="countdownScreen">
-  <h1>Something beautiful is coming… ✨</h1>
+  <h1>Something beautiful is coming ✨</h1>
   <img src="ipsita.jpeg" class="glow-img">
-  <div class="countdown-message">Countdown to Ipsita's 30th Birthday 🎉</div>
   <div id="countdownTimer"></div>
 </div>
 
 <div id="birthdayScreen">
-  <div class="hero">
-    <img src="ipsita.jpeg">
-    <h1>Happy <span class="gold">30th</span> Birthday, Ipsita ❤️</h1>
-  </div>
+  <h1>Happy <span class="gold">30th</span> Birthday ❤️</h1>
 
-  <div class="cake" id="cake">
+  <div class="cake">
     <div class="cake-base"></div>
-    <div class="icingText">30</div>
     <div class="candle"></div>
     <div class="flame" id="flame"></div>
-    <div class="knife" id="knife"></div>
   </div>
 
-  <button onclick="blowCandle()">Blow the Candle 🎂</button>
+  <button id="blowBtn" onclick="startMicBlow()">Blow the Candle 🎤🎂</button>
+  <button id="retryBtn" style="display:none;" onclick="retryBlow()">Try Again 🔁</button>
 
   <div class="message" id="message">
     With all my love — Khalikul ❤️
   </div>
-
-  <!-- Screenshot button appears after blowing candle -->
-  <button id="captureBtn" onclick="captureAndShare()">Capture this moment 📸</button>
 </div>
 
-<canvas id="fireworks"></canvas>
+<canvas id="confetti"></canvas>
 
-<audio id="music" loop preload="auto">
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-  
 <script>
-/* Particles */
-for(let i=0;i<40;i++){
-  let p=document.createElement("div");
-  p.className="particle";
-  p.style.left=Math.random()*100+"vw";
-  p.style.animationDuration=(6+Math.random()*6)+"s";
-  document.body.appendChild(p);
-}
+/* ================= COUNTDOWN ================= */
+const TARGET_OFFSET=5.5*60*60*1000;
+function getTarget(year){return Date.UTC(year,2,2)-TARGET_OFFSET;}
+let now=Date.now();
+let year=new Date(now+TARGET_OFFSET).getUTCFullYear();
+let target=getTarget(year);
+if(now>=target){year++;target=getTarget(year);}
 
-/* ===== Countdown fixed to Sri Lanka Time (UTC+5:30) ===== */
-const TARGET_OFFSET = 5.5 * 60 * 60 * 1000; // milliseconds for UTC+5:30
-
-function getNowUTC() {
-  return Date.now();
-}
-
-function getLocalTargetTimestamp(year, month, day, hour = 0, minute = 0, second = 0) {
-  return Date.UTC(year, month, day, hour, minute, second) - TARGET_OFFSET;
-}
-
-let nowUTC = getNowUTC();
-let nowLocal = new Date(nowUTC + TARGET_OFFSET);
-let targetYear = nowLocal.getUTCFullYear();
-let targetTimestamp = getLocalTargetTimestamp(targetYear, 2, 2, 0, 0, 0);
-
-if (nowUTC >= targetTimestamp) {
-  targetYear = targetYear + 1;
-  targetTimestamp = getLocalTargetTimestamp(targetYear, 2, 2, 0, 0, 0);
-}
-
-function updateCountdown() {
-  const currentUTC = getNowUTC();
-  const distance = targetTimestamp - currentUTC;
-
-  if (distance <= 0) {
-    document.getElementById("countdownScreen").style.display = "none";
-    document.getElementById("birthdayScreen").style.display = "block";
+function updateCountdown(){
+  let diff=target-Date.now();
+  if(diff<=0){
+    countdownScreen.style.display="none";
+    birthdayScreen.style.display="flex";
     return;
   }
+  let d=Math.floor(diff/86400000);
+  let h=Math.floor((diff%86400000)/3600000);
+  let m=Math.floor((diff%3600000)/60000);
+  let s=Math.floor((diff%60000)/1000);
+  countdownTimer.innerHTML=`${d}d ${h}h ${m}m ${s}s`;
+}
+setInterval(updateCountdown,1000);
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+/* ================= MIC + FLAME ================= */
+let audioCtx, analyser, source, data;
+let blowTimer=null;
+let blown=false;
 
-  // Format with spaces and ensure digits are used
-  document.getElementById("countdownTimer").innerHTML =
-    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+async function startMicBlow(){
+  blowBtn.innerText="Blow now... 💨";
+  retryBtn.style.display="none";
+  blown=false;
+
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  analyser=audioCtx.createAnalyser();
+  source=audioCtx.createMediaStreamSource(stream);
+  source.connect(analyser);
+  analyser.fftSize=256;
+  data=new Uint8Array(analyser.frequencyBinCount);
+
+  detectBlow();
+  blowTimer=setTimeout(()=>{
+    if(!blown){
+      stopMic();
+      blowBtn.innerText="Too soft 😅";
+      retryBtn.style.display="inline-block";
+    }
+  },5000);
 }
 
-setInterval(updateCountdown, 1000);
+function detectBlow(){
+  analyser.getByteFrequencyData(data);
+  let volume=data.reduce((a,b)=>a+b)/data.length;
 
-/* ===== Blow Candle ===== */
-function blowCandle(){
-  const music=document.getElementById("music");
-  music.volume=0;
-  music.play();
-  let fade=setInterval(()=>{
-    if(music.volume<0.6){music.volume+=0.02;}
-    else clearInterval(fade);
-  },200);
+  // Flame reacts to volume
+  flame.style.transform=`translateX(-50%) scale(${1+volume/200})`;
 
-  document.getElementById("flame").style.display="none";
-  document.getElementById("message").classList.add("show");
-  document.getElementById("captureBtn").classList.add("show");
-  startFireworks();
+  if(volume>60){
+    blown=true;
+    clearTimeout(blowTimer);
+    extinguish();
+    stopMic();
+    return;
+  }
+  if(!blown) requestAnimationFrame(detectBlow);
 }
 
-/* ===== Fireworks ===== */
-const canvas=document.getElementById("fireworks");
+function stopMic(){
+  if(source) source.disconnect();
+  if(audioCtx) audioCtx.close();
+}
+
+function retryBlow(){
+  blowBtn.innerText="Blow the Candle 🎤🎂";
+  retryBtn.style.display="none";
+}
+
+/* ================= EXTINGUISH ================= */
+function extinguish(){
+  flame.style.display="none";
+  createSmoke();
+  startConfetti();
+  message.classList.add("show");
+}
+
+function createSmoke(){
+  for(let i=0;i<5;i++){
+    let s=document.createElement("div");
+    s.className="smoke";
+    s.style.left="50%";
+    s.style.animationDelay=i*0.3+"s";
+    document.querySelector(".cake").appendChild(s);
+    setTimeout(()=>s.remove(),3000);
+  }
+}
+
+/* ================= CONFETTI PHYSICS ================= */
+const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
-let particles=[];
-function startFireworks(){
-  for(let i=0;i<80;i++){
-    particles.push({
+
+let confetti=[];
+
+function startConfetti(){
+  for(let i=0;i<150;i++){
+    confetti.push({
       x:canvas.width/2,
       y:canvas.height/2,
-      dx:(Math.random()-0.5)*8,
-      dy:(Math.random()-0.5)*8,
-      life:100
+      vx:(Math.random()-0.5)*8,
+      vy:(Math.random()-0.5)*8,
+      size:Math.random()*6+4,
+      color:`hsl(${Math.random()*360},100%,50%)`,
+      gravity:0.15,
+      life:200
     });
   }
-  animate();
-}
-function animate(){
-  ctx.fillStyle="rgba(0,0,0,0.2)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  particles.forEach((p,i)=>{
-    p.x+=p.dx;p.y+=p.dy;p.life--;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,2,0,Math.PI*2);
-    ctx.fillStyle="gold";
-    ctx.fill();
-    if(p.life<=0)particles.splice(i,1);
-  });
-  if(particles.length>0)requestAnimationFrame(animate);
+  animateConfetti();
 }
 
-/* ===== Knife + Roses ===== */
-const cake=document.getElementById("cake");
-const knife=document.getElementById("knife");
-let cutting=false;
-
-cake.addEventListener("touchstart",()=>{
-  cutting=true;
-  knife.style.display="block";
-});
-cake.addEventListener("touchmove",e=>{
-  if(!cutting)return;
-  e.preventDefault();
-  let rect=cake.getBoundingClientRect();
-  knife.style.left=(e.touches[0].clientX-rect.left)+"px";
-});
-cake.addEventListener("touchend",()=>{
-  cutting=false;
-  knife.style.display="none";
-  releaseRoses();
-});
-cake.addEventListener("mousedown",()=>{
-  cutting=true;
-  knife.style.display="block";
-});
-cake.addEventListener("mousemove",e=>{
-  if(!cutting)return;
-  let rect=cake.getBoundingClientRect();
-  knife.style.left=(e.clientX-rect.left)+"px";
-});
-cake.addEventListener("mouseup",()=>{
-  cutting=false;
-  knife.style.display="none";
-  releaseRoses();
-});
-
-function releaseRoses(){
-  for(let i=0;i<30;i++){
-    setTimeout(()=>{
-      let rose=document.createElement("div");
-      rose.className="rose";
-      rose.innerHTML="🌹";
-      rose.style.left=Math.random()*100+"vw";
-      document.body.appendChild(rose);
-      setTimeout(()=>rose.remove(),6000);
-    },i*120);
+function animateConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let i=confetti.length-1;i>=0;i--){
+    let c=confetti[i];
+    c.vy+=c.gravity;
+    c.x+=c.vx;
+    c.y+=c.vy;
+    c.life--;
+    ctx.fillStyle=c.color;
+    ctx.fillRect(c.x,c.y,c.size,c.size);
+    if(c.life<=0) confetti.splice(i,1);
   }
-}
-
-/* ===== Screenshot & Share ===== */
-function captureAndShare() {
-  const element = document.getElementById("birthdayScreen");
-
-  html2canvas(element, {
-    scale: 1.5,
-    backgroundColor: null,
-    allowTaint: false,
-    useCORS: true
-  }).then((canvas) => {
-    canvas.toBlob((blob) => {
-      if (navigator.share) {
-        const file = new File([blob], 'birthday-moment.png', { type: 'image/png' });
-        navigator.share({
-          title: 'Ipsita\'s Birthday',
-          text: 'Look at this beautiful moment!',
-          files: [file]
-        }).catch(() => fallbackDownload(blob));
-      } else {
-        fallbackDownload(blob);
-      }
-    }, 'image/png');
-  }).catch(error => {
-    alert('Sorry, could not capture the moment. Try again.');
-    console.error(error);
-  });
-}
-
-function fallbackDownload(blob) {
-  const link = document.createElement('a');
-  link.download = 'birthday-moment.png';
-  link.href = URL.createObjectURL(blob);
-  link.click();
-  URL.revokeObjectURL(link.href);
+  if(confetti.length>0) requestAnimationFrame(animateConfetti);
 }
 </script>
 
