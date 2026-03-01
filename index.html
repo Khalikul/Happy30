@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday ❤️</title>
+<title>For Ipsita ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 *{box-sizing:border-box;}
@@ -18,14 +19,14 @@ body{
   background:#000;
 }
 
-/* Ambient background */
+/* Ambient glow */
 body::before{
   content:"";
   position:fixed;
   top:-50%; left:-50%;
   width:200%; height:200%;
   background:radial-gradient(circle at 30% 30%, rgba(212,175,55,.15), transparent 40%);
-  animation:ambientMove 20s linear infinite alternate;
+  animation:ambientMove 18s linear infinite alternate;
   z-index:-2;
 }
 @keyframes ambientMove{
@@ -33,7 +34,22 @@ body::before{
   to{transform:translate(10%,10%);}
 }
 
-/* Layout */
+/* Floating particles */
+.particle{
+  position:fixed;
+  width:3px;height:3px;
+  background:gold;
+  border-radius:50%;
+  opacity:.4;
+  animation:floatUp linear infinite;
+  z-index:-1;
+}
+@keyframes floatUp{
+  from{transform:translateY(100vh);opacity:0;}
+  20%{opacity:.6;}
+  to{transform:translateY(-10vh);opacity:0;}
+}
+
 .container{
   position:absolute;
   width:100%;
@@ -54,29 +70,69 @@ button{
   background:rgba(0,0,0,.4);
   color:#d4af37;
   font-weight:bold;
-  margin:12px;
+  margin:10px;
   cursor:pointer;
+  width:min(80%,280px);
 }
 
 /* Cake */
-.cake{position:relative;width:200px;height:230px;margin:20px auto;}
+.cake{
+  position:relative;
+  width:200px;
+  height:230px;
+  margin:20px auto;
+  touch-action:none;
+}
+
 .cake-base{
-  position:absolute;bottom:0;width:100%;height:100px;
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:100px;
   background:linear-gradient(#ffb6c1,#ff8fab);
   border-radius:20px;
 }
+
 .candle{
-  position:absolute;width:12px;height:60px;background:white;
+  position:absolute;
+  width:12px;height:60px;
+  background:white;
   left:50%;transform:translateX(-50%);
   bottom:100px;
 }
+
 .flame{
-  position:absolute;width:18px;height:26px;
+  position:absolute;
+  width:18px;height:26px;
   left:50%;transform:translateX(-50%);
   bottom:160px;
   background:radial-gradient(circle,#ffd700 40%,orange 70%);
   border-radius:50%;
   transition:transform .1s, box-shadow .1s;
+}
+
+/* Knife */
+.knife{
+  position:absolute;
+  width:80px;
+  height:6px;
+  background:linear-gradient(to right,#ccc,#eee,#ccc);
+  top:110px;
+  left:60px;
+  border-radius:4px;
+  display:none;
+}
+
+/* Roses */
+.rose{
+  position:fixed;
+  font-size:24px;
+  animation:riseRose 5s linear forwards;
+}
+@keyframes riseRose{
+  from{transform:translateY(100vh);opacity:0;}
+  10%{opacity:1;}
+  to{transform:translateY(-10vh);opacity:0;}
 }
 
 /* Smoke */
@@ -103,38 +159,89 @@ canvas{
 
 .message{opacity:0;transition:opacity 2s;}
 .show{opacity:1;}
+
+#captureBtn{display:none;}
+#captureBtn.show{display:block;}
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>Happy <span class="gold">30th</span> Birthday ❤️</h1>
+<div class="container" id="birthdayScreen">
+  <h1>Happy <span class="gold">30th</span> Birthday, Ipsita ❤️</h1>
 
-  <div class="cake">
+  <div class="cake" id="cake">
     <div class="cake-base"></div>
     <div class="candle"></div>
     <div class="flame" id="flame"></div>
+    <div class="knife" id="knife"></div>
   </div>
 
   <button id="blowBtn" onclick="startMicBlow()">Blow the Candle 🎤🎂</button>
   <button id="retryBtn" style="display:none;" onclick="resetBlow()">Try Again 🔁</button>
 
   <div class="message" id="message">
-    With all my love ❤️
+    With all my love — Khalikul ❤️
   </div>
+
+  <button id="captureBtn" onclick="captureMoment()">Capture this moment 📸</button>
 </div>
 
 <canvas id="confetti"></canvas>
 
-<script>
-/* ================= iPHONE SAFE MIC SYSTEM ================= */
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
 
-let audioCtx;
-let analyser;
-let micStream;
-let dataArray;
-let blowing=false;
+<script>
+
+/* Floating particles */
+for(let i=0;i<30;i++){
+  let p=document.createElement("div");
+  p.className="particle";
+  p.style.left=Math.random()*100+"vw";
+  p.style.animationDuration=(6+Math.random()*6)+"s";
+  document.body.appendChild(p);
+}
+
+/* ================= CAKE CUTTING ================= */
+
+const cake=document.getElementById("cake");
+const knife=document.getElementById("knife");
+let cutting=false;
+
+cake.addEventListener("touchstart",()=>{cutting=true;knife.style.display="block";});
+cake.addEventListener("touchmove",e=>{
+  if(!cutting)return;
+  let rect=cake.getBoundingClientRect();
+  knife.style.left=(e.touches[0].clientX-rect.left)+"px";
+});
+cake.addEventListener("touchend",()=>{cutting=false;knife.style.display="none";releaseRoses();});
+
+cake.addEventListener("mousedown",()=>{cutting=true;knife.style.display="block";});
+cake.addEventListener("mousemove",e=>{
+  if(!cutting)return;
+  let rect=cake.getBoundingClientRect();
+  knife.style.left=(e.clientX-rect.left)+"px";
+});
+cake.addEventListener("mouseup",()=>{cutting=false;knife.style.display="none";releaseRoses();});
+
+function releaseRoses(){
+  for(let i=0;i<25;i++){
+    setTimeout(()=>{
+      let rose=document.createElement("div");
+      rose.className="rose";
+      rose.innerHTML="🌹";
+      rose.style.left=Math.random()*100+"vw";
+      document.body.appendChild(rose);
+      setTimeout(()=>rose.remove(),5000);
+    },i*120);
+  }
+}
+
+/* ================= MIC BLOW (iPhone tuned) ================= */
+
+let audioCtx, analyser, micSource, dataArray, blowing=false;
 
 async function startMicBlow(){
   try{
@@ -145,31 +252,20 @@ async function startMicBlow(){
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
 
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-
-    if(audioCtx.state==="suspended"){
-      await audioCtx.resume();
-    }
+    if(audioCtx.state==="suspended") await audioCtx.resume();
 
     analyser=audioCtx.createAnalyser();
     analyser.fftSize=2048;
 
-    micStream=audioCtx.createMediaStreamSource(stream);
-    micStream.connect(analyser);
+    micSource=audioCtx.createMediaStreamSource(stream);
+    micSource.connect(analyser);
 
     dataArray=new Uint8Array(analyser.fftSize);
 
     listenForBlow();
 
-    setTimeout(()=>{
-      if(!blowing){
-        stopMic();
-        blowBtn.innerText="Blow harder 😅";
-        retryBtn.style.display="inline-block";
-      }
-    },5000);
-
-  }catch(err){
-    alert("Please allow microphone access in Safari settings.");
+  }catch(e){
+    alert("Please allow microphone access in Safari.");
   }
 }
 
@@ -187,7 +283,6 @@ function listenForBlow(){
   flame.style.transform=`translateX(-50%) scale(${1+rms*4})`;
   flame.style.boxShadow=`0 0 ${rms*100}px gold`;
 
-  // Lower threshold for iPhone mic compression
   if(rms>0.12){
     blowing=true;
     stopMic();
@@ -199,7 +294,7 @@ function listenForBlow(){
 }
 
 function stopMic(){
-  if(micStream) micStream.disconnect();
+  if(micSource) micSource.disconnect();
   if(audioCtx) audioCtx.close();
 }
 
@@ -208,13 +303,15 @@ function resetBlow(){
   retryBtn.style.display="none";
 }
 
-/* ================= EFFECTS ================= */
+/* ================= EXTINGUISH ================= */
 
 function extinguish(){
   flame.style.display="none";
   createSmoke();
   startConfetti();
+  fadeMusicIn();
   message.classList.add("show");
+  captureBtn.classList.add("show");
 }
 
 function createSmoke(){
@@ -227,7 +324,8 @@ function createSmoke(){
   }
 }
 
-/* Confetti */
+/* ================= CONFETTI ================= */
+
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
@@ -263,6 +361,30 @@ function animateConfetti(){
   }
   if(confetti.length>0) requestAnimationFrame(animateConfetti);
 }
+
+/* ================= MUSIC ================= */
+
+function fadeMusicIn(){
+  const music=document.getElementById("bgMusic");
+  music.volume=0;
+  music.play().catch(()=>{});
+  let fade=setInterval(()=>{
+    if(music.volume<0.5) music.volume+=0.02;
+    else clearInterval(fade);
+  },200);
+}
+
+/* ================= SCREENSHOT ================= */
+
+function captureMoment(){
+  html2canvas(document.getElementById("birthdayScreen")).then(canvas=>{
+    const link=document.createElement("a");
+    link.download="birthday-moment.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
+}
+
 </script>
 
 </body>
